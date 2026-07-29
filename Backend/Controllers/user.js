@@ -11,6 +11,7 @@ import { generateToken } from "../Authentication/auth.js";
 export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log("Received signup data:", { name, email, password });
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });

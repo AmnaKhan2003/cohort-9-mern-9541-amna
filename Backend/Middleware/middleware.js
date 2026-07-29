@@ -1,6 +1,6 @@
 import { verifyToken } from "../Authentication/auth.js";
 
-const authMiddleware = (req, res, next) => {
+export const authMiddleware = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -23,5 +23,3 @@ const authMiddleware = (req, res, next) => {
     });
   }
 };
-
-export default authMiddleware;
