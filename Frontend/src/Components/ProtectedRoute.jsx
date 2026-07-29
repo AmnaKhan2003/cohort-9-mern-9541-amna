@@ -25,12 +25,17 @@ export default function ProtectedRoute({ children }) {
             setIsVerified(true);
 
         } catch (error) {
-            setIsVerified(false);
-            if (error.response?.status === 401) {
-                toast.error("Session expired. Please login again");
-                navigate("/login");
-            }
+
+        setIsVerified(false);
+
+        if (error.response?.status === 401) {
+            toast.error("Session expired. Please login again");
+            navigate("/login");
+        } 
+        else {
+            toast.error("Unable to verify session. Please try again.");
         }
+    }
     };
 
     verifyToken();
