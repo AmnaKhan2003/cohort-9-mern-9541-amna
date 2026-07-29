@@ -7,7 +7,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
-\
       <nav className="flex items-center justify-between px-8 py-6 md:px-16">
  
         <div className="text-2xl font-bold tracking-wide"> Note<span className="text-blue-400">Flow</span> </div>

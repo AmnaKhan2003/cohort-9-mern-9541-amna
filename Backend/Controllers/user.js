@@ -11,7 +11,6 @@ import { generateToken } from "../Authentication/auth.js";
 export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    console.log("Received signup data:", { name, email, password });
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -97,9 +96,14 @@ export const login = async (req, res) => {
 
     // Return token in response
 
-    res.status(200).json({
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
+    res.json({
       message: "Login successful",
-      token: token,
     });
   } catch (error) {
     res.status(500).json({

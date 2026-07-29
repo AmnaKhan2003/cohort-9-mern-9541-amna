@@ -1,56 +1,44 @@
-import {React, useEffect}from 'react'
-import { useNavigate } from 'react-router-dom'
-import {jwtDecode} from 'jwt-decode';
-import { toast } from 'react-toastify';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
+
 export default function ProtectedRoute({ children }) {
+
     const navigate = useNavigate();
+    const [isVerified, setIsVerified] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
 
-        const verifyToken =async () => {
-        try{
+    const verifyToken = async () => {
+        try {
 
-        const token = localStorage.getItem('token')
+            console.log("API CALL START");
 
-        if(!token){
-            toast.error('Please login first.')
-            navigate('/login')
-            return;
-        }
-
-        const response = await axios.get('http://localhost:5000/api/auth/verify', {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            const response = await axios.get(
+                "http://localhost:5000/api/auth/verify",
+                {
+                    withCredentials: true
                 }
-            })
+            );
 
-            console.log(response.data)
-        }
-        
+            console.log("SUCCESS:", response.data);
 
-        catch(error){
-            if(error.response){
-                localStorage.removeItem('token')
-                toast.error('Session expired. Please login again.')
-                navigate('/login')
+            setIsVerified(true);
+
+        } catch (error) {
+
+
+            if (error.response?.status === 401) {
+                toast.error("Session expired. Please login again");
+                navigate("/login");
             }
-
-
         }
+    };
 
+    verifyToken();
 
+}, []);
 
-    }
-        verifyToken()
-
-    },[])
-
-
-
-
-  return (
-    children
-  )
+    return isVerified ? children : null;
 }
-

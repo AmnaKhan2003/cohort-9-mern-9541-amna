@@ -29,13 +29,13 @@ export default function Login() {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/auth/login",
-        formData
+        formData,
+        {
+            withCredentials: true
+         }
       );
 
       console.log(response.data);
-
-      // Store JWT token
-      localStorage.setItem("token", response.data.token);
 
       toast.success(response.data.message);
 
