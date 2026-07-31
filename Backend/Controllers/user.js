@@ -6,6 +6,10 @@ import jwt from "jsonwebtoken";
 
 import { generateToken } from "../Authentication/auth.js";
 
+import dotenv from "dotenv";
+
+dotenv.config();
+
 // Signup
 
 export const signup = async (req, res) => {
@@ -96,9 +100,14 @@ export const login = async (req, res) => {
 
     // Return token in response
 
-    res.status(200).json({
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
+    res.json({
       message: "Login successful",
-      token: token,
     });
   } catch (error) {
     res.status(500).json({
