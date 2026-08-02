@@ -6,7 +6,7 @@ import {
   deleteNote,
   getSpecificNote,
   getAllNotes,
-} from "../Controllers/user.js";
+} from "../Controllers/notes.js";
 
 import { authMiddleware } from "../Middleware/middleware.js";
 
