@@ -1,4 +1,5 @@
 import Note from "../Models/notes.js";
+import mongoose from "mongoose";
 // Create Note
 export const createNote = async (req, res) => {
   try {
@@ -31,6 +32,12 @@ export const createNote = async (req, res) => {
 export const editNote = async (req, res) => {
   const { id } = req.params;
   const { title, content } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      message: "Invalid note ID",
+    });
+  }
   if (!title || !content) {
     return res.status(400).json({
       message: "Title and content are required",
@@ -60,6 +67,11 @@ export const editNote = async (req, res) => {
 //Delete Note
 export const deleteNote = async (req, res) => {
   const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      message: "Invalid note ID",
+    });
+  }
   try {
     const note = await Note.findOneAndDelete({ _id: id, user: req.user._id });
     if (!note) {
@@ -80,6 +92,11 @@ export const deleteNote = async (req, res) => {
 // getSpecificNote
 export const getSpecificNote = async (req, res) => {
   const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      message: "Invalid note ID",
+    });
+  }
   try {
     const note = await Note.findOne({ _id: id, user: req.user._id });
     if (!note) {
