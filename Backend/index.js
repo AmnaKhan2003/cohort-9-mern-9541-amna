@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 
 import connectDB from "./Database/db.js";
 import authRoutes from "./Routes/user.js";
+import notesRoutes from "./Routes/notes.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/notes", notesRoutes);
 
 const startServer = async () => {
   await connectDB();
