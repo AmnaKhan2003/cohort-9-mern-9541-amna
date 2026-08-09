@@ -115,3 +115,22 @@ export const login = async (req, res) => {
     });
   }
 };
+
+export const userProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      message: "User profile fetched successfully",
+      user: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};

@@ -14,7 +14,7 @@ if (!process.env.JWT_EXPIRE) {
 export const generateToken = (userId, email) => {
   return jwt.sign(
     {
-      userId,
+      _id: userId,
       email,
     },
     process.env.JWT_SECRET,
