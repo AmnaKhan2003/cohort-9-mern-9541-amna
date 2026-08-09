@@ -12,8 +12,6 @@ export const createNote = async (req, res) => {
       });
     }
 
-    console.log("User ID from request:", req.user._id);
-
     const note = await Note.create({
       title,
       content,

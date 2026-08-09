@@ -11,30 +11,32 @@ export default function UserProfile() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const getProfile = async () => {
-    try {
-
-      const response = await axios.get(
-        "http://localhost:5000/api/auth/user",
-        {
-          withCredentials: true,
-        }
-      );
-
-      setUser(response.data.user || response.data.data);
-
-    } catch (error) {
-
-      if (error.response?.status === 401) {
-        toast.error("Session expired. Please login again");
-        navigate("/login");
-      } else {
-        toast.error("Unable to fetch profile");
+const getProfile = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:5000/api/auth/user",
+      {
+        withCredentials: true,
       }
+    );
 
+    setUser(response.data.user || response.data.data);
+
+  } catch (error) {
+
+    if (error.response?.status === 401) {
+      toast.error("Session expired. Please login again");
+      navigate("/login");
+    } else {
+      toast.error("Unable to fetch profile");
     }
-  };
+
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export default function UserProfile() {
       <Sidebar />
 
 
-      <main className="ml-72 p-10">
+      <main className="ml-0 p-6 md:ml-72 md:p-10">
 
         <div className="mb-8">
 

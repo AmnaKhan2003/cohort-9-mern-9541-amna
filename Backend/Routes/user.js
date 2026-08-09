@@ -16,7 +16,7 @@ router.post("/login", login);
 
 router.get("/user", authMiddleware, userProfile);
 
-router.get("/logout", authMiddleware, (req, res) => {
+router.post("/logout", authMiddleware, (req, res) => {
   res.clearCookie("token");
   res.json({ message: "Logout successful" });
 });

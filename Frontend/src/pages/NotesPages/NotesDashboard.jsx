@@ -64,22 +64,25 @@ export default function NotesDashboard() {
         }
       );
 
-      setNotes(
-        notes.filter((note) => note._id !== id)
-      );
+      setNotes((currentNotes) =>
+      currentNotes.filter((note) => note._id !== id)
+    );
 
       toast.success("Note deleted successfully");
 
     } catch (error) {
 
-    toast.error("Unable to verify session. Please try again.");
+  if (error.response?.status === 401) {
+    toast.error("Session expired. Please login again");
+    navigate("/login");
+    return;
+  }
 
-      toast.error(
-        error.response?.data?.message ||
-        "Failed to delete note"
-      );
-
-    }
+  toast.error(
+    error.response?.data?.message ||
+    "Failed to delete note"
+  );
+}
 
   };
 

@@ -111,11 +111,12 @@ export default function EditNote() {
             className="bg-white/5 border border-white/10 rounded-2xl p-8"
           >
 
-            <label className="block text-gray-300 mb-2">
+            <label className="block text-gray-300 mb-2"  htmlFor="edit-note-title">
               Title
             </label>
 
             <input
+              id="edit-note-title"
               type="text"
               name="title"
               value={formData.title}
@@ -124,11 +125,12 @@ export default function EditNote() {
             />
 
 
-            <label className="block text-gray-300 mb-2">
+            <label className="block text-gray-300 mb-2"  htmlFor="edit-note-content">
               Content
             </label>
 
             <textarea
+              id="edit-note-content"
               name="content"
               value={formData.content}
               onChange={handleChange}
