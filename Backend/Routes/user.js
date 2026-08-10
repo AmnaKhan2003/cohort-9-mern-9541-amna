@@ -1,6 +1,6 @@
 import express from "express";
 
-import { signup, login } from "../Controllers/user.js";
+import { signup, login, userProfile } from "../Controllers/user.js";
 
 import { authMiddleware } from "../Middleware/middleware.js";
 
@@ -13,5 +13,12 @@ router.get("/verify", authMiddleware, (req, res) => {
 router.post("/signup", signup);
 
 router.post("/login", login);
+
+router.get("/user", authMiddleware, userProfile);
+
+router.post("/logout", authMiddleware, (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "Logout successful" });
+});
 
 export default router;

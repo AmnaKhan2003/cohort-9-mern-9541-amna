@@ -13,8 +13,6 @@ export default function ProtectedRoute({ children }) {
     const verifyToken = async () => {
         try {
 
-            console.log("API CALL START");
-
             const response = await axios.get(
                 "http://localhost:5000/api/auth/verify",
                 {
@@ -25,7 +23,7 @@ export default function ProtectedRoute({ children }) {
             setIsVerified(true);
 
         } catch (error) {
-
+            console.error("Error verifying token:", error);
         setIsVerified(false);
 
         if (error.response?.status === 401) {
@@ -34,6 +32,7 @@ export default function ProtectedRoute({ children }) {
         } 
         else {
             toast.error("Unable to verify session. Please try again.");
+            navigate("/login");
         }
     }
     };

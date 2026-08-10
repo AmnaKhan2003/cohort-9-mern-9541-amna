@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 export const createNote = async (req, res) => {
   try {
     const { title, content } = req.body;
+    console.log("Request body:", req.body);
 
     if (!title || !content) {
       return res.status(400).json({
