@@ -8,7 +8,7 @@ export const createNote = async (req, res, next) => {
     console.log("Request body:", req.body);
 
     if (!title || !content) {
-      logger.warn("Create note failed: title or content missing");
+      req.log.warn("Create note failed: title or content missing");
       return res.status(400).json({
         message: "Title and content are required",
       });
@@ -19,7 +19,7 @@ export const createNote = async (req, res, next) => {
       content,
       user: req.user._id,
     });
-    logger.info(`Note created successfully for user: ${req.user._id}`);
+    req.log.info(`Note created successfully for user: ${req.user._id}`);
     res.status(201).json({
       message: "Note created successfully",
       note,
@@ -40,7 +40,7 @@ export const editNote = async (req, res, next) => {
     });
   }
   if (!title || !content) {
-    logger.warn("Edit note failed: title or content missing");
+    req.log.warn("Edit note failed: title or content missing");
     return res.status(400).json({
       message: "Title and content are required",
     });
@@ -48,7 +48,7 @@ export const editNote = async (req, res, next) => {
   try {
     const note = await Note.findOne({ _id: id, user: req.user._id });
     if (!note) {
-      logger.warn(
+      req.log.warn(
         `Edit note failed: note not found for user ${req.user._id} and note ID ${id}`,
       );
       return res.status(404).json({
@@ -58,7 +58,7 @@ export const editNote = async (req, res, next) => {
     note.title = title;
     note.content = content;
     await note.save();
-    logger.info(
+    req.log.info(
       `Note updated successfully for user: ${req.user._id} and note ID: ${id}`,
     );
     res.status(200).json({
@@ -81,14 +81,14 @@ export const deleteNote = async (req, res, next) => {
   try {
     const note = await Note.findOneAndDelete({ _id: id, user: req.user._id });
     if (!note) {
-      logger.warn(
+      req.log.warn(
         `Delete note failed: note not found for user ${req.user._id} and note ID ${id}`,
       );
       return res.status(404).json({
         message: "Note not found",
       });
     }
-    logger.info(
+    req.log.info(
       `Note deleted successfully for user: ${req.user._id} and note ID: ${id}`,
     );
     res.status(200).json({
@@ -110,14 +110,14 @@ export const getSpecificNote = async (req, res, next) => {
   try {
     const note = await Note.findOne({ _id: id, user: req.user._id });
     if (!note) {
-      logger.warn(
+      req.log.warn(
         `Get specific note failed: note not found for user ${req.user._id} and note ID ${id}`,
       );
       return res.status(404).json({
         message: "Note not found",
       });
     }
-    logger.info(
+    req.log.info(
       `Specific note fetched successfully for user: ${req.user._id} and note ID: ${id}`,
     );
     res.status(200).json({
@@ -134,7 +134,7 @@ export const getAllNotes = async (req, res, next) => {
   try {
     const id = req.user._id;
     const notes = await Note.find({ user: id });
-    logger.info(`All notes fetched successfully for user: ${id}`);
+    req.log.info(`All notes fetched successfully for user: ${id}`);
     res.status(200).json({
       message: "Notes fetched successfully",
       notes,

@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { generateToken } from "../Authentication/auth.js";
 import dotenv from "dotenv";
-import logger from "../Middleware/logger.js";
 dotenv.config();
 
 // Signup
@@ -13,12 +12,12 @@ export const signup = async (req, res, next) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      logger.warn("Signup failed: required fields missing");
+      req.log.warn("Signup failed: required fields missing");
       return res.status(400).json({ message: "All fields are required" });
     }
 
     if (password.length < 6) {
-      logger.warn("Signup failed: password too short");
+      req.log.warn("Signup failed: password too short");
       return res
         .status(400)
         .json({ message: "Password must be at least 6 characters" });
@@ -27,7 +26,7 @@ export const signup = async (req, res, next) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      logger.warn("Registration attempt with existing email");
+      req.log.warn("Registration attempt with existing email");
       return res.status(409).json({
         message: "Registration failed.",
       });
@@ -40,7 +39,7 @@ export const signup = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
-    logger.info("User registered successfully");
+    req.log.info("User registered successfully");
     res.status(201).json({
       message: "Signup successful",
 
@@ -52,7 +51,7 @@ export const signup = async (req, res, next) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      logger.warn("Registration attempt with existing email");
+      req.log.warn("Registration attempt with existing email");
       return res.status(409).json({
         message: "Registration failed.",
       });
@@ -68,7 +67,7 @@ export const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      logger.warn("Login failed: email or password missing");
+      req.log.warn("Login failed: email or password missing");
       return res.status(400).json({
         message: "Email and password are required",
       });
@@ -77,7 +76,7 @@ export const login = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      logger.warn("Login failed: user not found");
+      req.log.warn("Login failed: user not found");
       return res.status(404).json({
         message: "Invalid email or password",
       });
@@ -86,7 +85,7 @@ export const login = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      logger.warn("Login failed: incorrect password");
+      req.log.warn("Login failed: incorrect password");
       return res.status(401).json({
         message: "Invalid email or password",
       });
@@ -103,7 +102,7 @@ export const login = async (req, res, next) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
-    logger.info("User logged in successfully");
+    req.log.info("User logged in successfully");
     res.json({
       message: "Login successful",
     });
@@ -116,12 +115,12 @@ export const userProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      logger.warn("Profile not found for user");
+      req.log.warn("Profile not found for user");
       return res.status(404).json({
         message: "User not found",
       });
     }
-    logger.info("User profile fetched successfully");
+    req.log.info("User profile fetched successfully");
     res.status(200).json({
       message: "User profile fetched successfully",
       user: user,

@@ -1,7 +1,5 @@
-import logger from "./logger.js";
-
 const errorHandler = (err, req, res, next) => {
-  logger.error(
+  req.log.error(
     {
       message: err.message,
       stack: err.stack,
