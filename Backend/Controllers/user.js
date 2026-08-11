@@ -27,7 +27,7 @@ export const signup = async (req, res, next) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      logger.warn(`Registration attempt with existing email: ${email}`);
+      logger.warn("Registration attempt with existing email");
       return res.status(409).json({
         message: "Registration failed.",
       });
@@ -40,7 +40,7 @@ export const signup = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
-    logger.info(`User registered successfully: ${user.email}`);
+    logger.info("User registered successfully");
     res.status(201).json({
       message: "Signup successful",
 
@@ -52,7 +52,7 @@ export const signup = async (req, res, next) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      logger.warn(`Registration attempt with existing email: ${email}`);
+      logger.warn("Registration attempt with existing email");
       return res.status(409).json({
         message: "Registration failed.",
       });
@@ -77,7 +77,7 @@ export const login = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      logger.warn(`Login failed: user not found for ${email}`);
+      logger.warn("Login failed: user not found");
       return res.status(404).json({
         message: "Invalid email or password",
       });
@@ -86,7 +86,7 @@ export const login = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      logger.warn(`Login failed: incorrect password for ${email}`);
+      logger.warn("Login failed: incorrect password");
       return res.status(401).json({
         message: "Invalid email or password",
       });
@@ -103,7 +103,7 @@ export const login = async (req, res, next) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
-    logger.info(`User logged in successfully: ${user.email}`);
+    logger.info("User logged in successfully");
     res.json({
       message: "Login successful",
     });
@@ -116,12 +116,12 @@ export const userProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      logger.warn(`Profile not found for user: ${req.user._id}`);
+      logger.warn("Profile not found for user");
       return res.status(404).json({
         message: "User not found",
       });
     }
-    logger.info(`User profile fetched successfully: ${user.email}`);
+    logger.info("User profile fetched successfully");
     res.status(200).json({
       message: "User profile fetched successfully",
       user: user,

@@ -10,9 +10,14 @@ const errorHandler = (err, req, res, next) => {
     },
     "Unhandled application error",
   );
-
-  res.status(err.statusCode || 500).json({
-    message: err.message || "Internal Server Error",
+  const statusCode =
+    Number.isInteger(err.statusCode) &&
+    err.statusCode >= 400 &&
+    err.statusCode <= 599
+      ? err.statusCode
+      : 500;
+  res.status(statusCode).json({
+    message: statusCode >= 500 ? "Internal Server Error" : err.message,
   });
 };
 
