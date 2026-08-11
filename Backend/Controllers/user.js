@@ -1,26 +1,24 @@
 import User from "../Models/user.js";
-
 import bcrypt from "bcrypt";
-
 import jwt from "jsonwebtoken";
-
 import { generateToken } from "../Authentication/auth.js";
-
 import dotenv from "dotenv";
-
+import logger from "../Middleware/logger.js";
 dotenv.config();
 
 // Signup
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
+      logger.warn("Signup failed: required fields missing");
       return res.status(400).json({ message: "All fields are required" });
     }
 
     if (password.length < 6) {
+      logger.warn("Signup failed: password too short");
       return res
         .status(400)
         .json({ message: "Password must be at least 6 characters" });
@@ -29,6 +27,7 @@ export const signup = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
+      logger.warn(`Registration attempt with existing email: ${email}`);
       return res.status(409).json({
         message: "Registration failed.",
       });
@@ -41,7 +40,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
     });
-
+    logger.info(`User registered successfully: ${user.email}`);
     res.status(201).json({
       message: "Signup successful",
 
@@ -53,26 +52,23 @@ export const signup = async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
+      logger.warn(`Registration attempt with existing email: ${email}`);
       return res.status(409).json({
         message: "Registration failed.",
       });
     }
-
-    console.error(error);
-
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };
 
 // Login
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
+      logger.warn("Login failed: email or password missing");
       return res.status(400).json({
         message: "Email and password are required",
       });
@@ -81,6 +77,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
+      logger.warn(`Login failed: user not found for ${email}`);
       return res.status(404).json({
         message: "Invalid email or password",
       });
@@ -89,6 +86,7 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
+      logger.warn(`Login failed: incorrect password for ${email}`);
       return res.status(401).json({
         message: "Invalid email or password",
       });
@@ -105,32 +103,30 @@ export const login = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
-
+    logger.info(`User logged in successfully: ${user.email}`);
     res.json({
       message: "Login successful",
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };
 
-export const userProfile = async (req, res) => {
+export const userProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
+      logger.warn(`Profile not found for user: ${req.user._id}`);
       return res.status(404).json({
         message: "User not found",
       });
     }
+    logger.info(`User profile fetched successfully: ${user.email}`);
     res.status(200).json({
       message: "User profile fetched successfully",
       user: user,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };
