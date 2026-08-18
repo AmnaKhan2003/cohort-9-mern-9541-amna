@@ -11,6 +11,7 @@ describe("Auth Controller Tests", () => {
       info: () => {},
     },
   });
+
   const createRes = () => ({
     statusCode: 200,
     body: null,
@@ -27,6 +28,7 @@ describe("Auth Controller Tests", () => {
 
     cookie() {},
   });
+
   const next = () => {};
 
   describe("Signup", () => {
@@ -37,7 +39,13 @@ describe("Auth Controller Tests", () => {
         password: "",
       });
       const res = createRes();
-      await signup(req, res, next);
+
+      try {
+        await signup(req, res, next);
+      } catch (error) {
+        throw error;
+      }
+
       expect(res.statusCode).to.equal(400);
       expect(res.body.message).to.equal("All fields are required");
     });
@@ -49,7 +57,13 @@ describe("Auth Controller Tests", () => {
         password: "123",
       });
       const res = createRes();
-      await signup(req, res, next);
+
+      try {
+        await signup(req, res, next);
+      } catch (error) {
+        throw error;
+      }
+
       expect(res.statusCode).to.equal(400);
       expect(res.body.message).to.equal(
         "Password must be at least 6 characters",
@@ -58,21 +72,32 @@ describe("Auth Controller Tests", () => {
 
     it("should return 409 if user already exists", async () => {
       const originalFindOne = User.findOne;
-      User.findOne = async () => ({
-        _id: "123",
-        name: "Existing User",
-        email: "nadeem@gmail.com",
-      });
-      const req = createReq({
-        name: "Nadeem",
-        email: "nadeem@gmail.com",
-        password: "123456",
-      });
-      const res = createRes();
-      await signup(req, res, next);
-      expect(res.statusCode).to.equal(409);
-      expect(res.body.message).to.equal("Registration failed.");
-      User.findOne = originalFindOne;
+
+      try {
+        User.findOne = async () => ({
+          _id: "123",
+          name: "Existing User",
+          email: "nadeem@gmail.com",
+        });
+
+        const req = createReq({
+          name: "Nadeem",
+          email: "nadeem@gmail.com",
+          password: "123456",
+        });
+        const res = createRes();
+
+        try {
+          await signup(req, res, next);
+        } catch (error) {
+          throw error;
+        }
+
+        expect(res.statusCode).to.equal(409);
+        expect(res.body.message).to.equal("Registration failed.");
+      } finally {
+        User.findOne = originalFindOne;
+      }
     });
   });
 
@@ -83,44 +108,73 @@ describe("Auth Controller Tests", () => {
         password: "",
       });
       const res = createRes();
-      await login(req, res, next);
+
+      try {
+        await login(req, res, next);
+      } catch (error) {
+        throw error;
+      }
+
       expect(res.statusCode).to.equal(400);
       expect(res.body.message).to.equal("Email and password are required");
     });
 
     it("should return 404 if user does not exist", async () => {
       const originalFindOne = User.findOne;
-      User.findOne = async () => null;
-      const req = createReq({
-        email: "notfound@gmail.com",
-        password: "123456",
-      });
-      const res = createRes();
-      await login(req, res, next);
-      expect(res.statusCode).to.equal(404);
-      expect(res.body.message).to.equal("Invalid email or password");
-      User.findOne = originalFindOne;
+
+      try {
+        User.findOne = async () => null;
+
+        const req = createReq({
+          email: "notfound@gmail.com",
+          password: "123456",
+        });
+        const res = createRes();
+
+        try {
+          await login(req, res, next);
+        } catch (error) {
+          throw error;
+        }
+
+        expect(res.statusCode).to.equal(404);
+        expect(res.body.message).to.equal("Invalid email or password");
+      } finally {
+        User.findOne = originalFindOne;
+      }
     });
 
     it("should return 401 if password is incorrect", async () => {
       const originalFindOne = User.findOne;
       const originalCompare = bcrypt.compare;
-      User.findOne = async () => ({
-        _id: "123",
-        email: "nadeem@gmail.com",
-        password: "hashedPassword",
-      });
-      bcrypt.compare = async () => false;
-      const req = createReq({
-        email: "nadeem@gmail.com",
-        password: "wrongpassword",
-      });
-      const res = createRes();
-      await login(req, res, next);
-      expect(res.statusCode).to.equal(401);
-      expect(res.body.message).to.equal("Invalid email or password");
-      User.findOne = originalFindOne;
-      bcrypt.compare = originalCompare;
+
+      try {
+        User.findOne = async () => ({
+          _id: "123",
+          email: "nadeem@gmail.com",
+          password: "hashedPassword",
+        });
+
+        bcrypt.compare = async () => false;
+
+        const req = createReq({
+          email: "nadeem@gmail.com",
+          password: "wrongpassword",
+        });
+        const res = createRes();
+
+        try {
+          await login(req, res, next);
+        } catch (error) {
+          throw error;
+        }
+
+        expect(res.statusCode).to.equal(401);
+        expect(res.body.message).to.equal("Invalid email or password");
+      } finally {
+        User.findOne = originalFindOne;
+        bcrypt.compare = originalCompare;
+      }
     });
   });
 });

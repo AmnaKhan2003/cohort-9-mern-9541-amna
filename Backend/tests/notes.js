@@ -24,15 +24,18 @@ describe("Notes Controller Tests", () => {
   const createRes = () => ({
     statusCode: 200,
     body: null,
+
     status(code) {
       this.statusCode = code;
       return this;
     },
+
     json(data) {
       this.body = data;
       return this;
     },
   });
+
   const next = () => {};
 
   describe("Create Note", () => {
@@ -42,27 +45,45 @@ describe("Notes Controller Tests", () => {
         content: "",
       });
       const res = createRes();
-      await createNote(req, res, next);
+
+      try {
+        await createNote(req, res, next);
+      } catch (error) {
+        throw error;
+      }
+
       expect(res.statusCode).to.equal(400);
       expect(res.body.message).to.equal("Title and content are required");
     });
+
     it("should create a note successfully", async () => {
       const originalCreate = Note.create;
-      Note.create = async () => ({
-        _id: "123",
-        title: "Test Note",
-        content: "Test Content",
-        user: "123456789012345678901234",
-      });
-      const req = createReq({
-        title: "Test Note",
-        content: "Test Content",
-      });
-      const res = createRes();
-      await createNote(req, res, next);
-      expect(res.statusCode).to.equal(201);
-      expect(res.body.message).to.equal("Note created successfully");
-      Note.create = originalCreate;
+
+      try {
+        Note.create = async () => ({
+          _id: "123",
+          title: "Test Note",
+          content: "Test Content",
+          user: "123456789012345678901234",
+        });
+
+        const req = createReq({
+          title: "Test Note",
+          content: "Test Content",
+        });
+        const res = createRes();
+
+        try {
+          await createNote(req, res, next);
+        } catch (error) {
+          throw error;
+        }
+
+        expect(res.statusCode).to.equal(201);
+        expect(res.body.message).to.equal("Note created successfully");
+      } finally {
+        Note.create = originalCreate;
+      }
     });
   });
 
@@ -78,7 +99,13 @@ describe("Notes Controller Tests", () => {
         },
       );
       const res = createRes();
-      await editNote(req, res, next);
+
+      try {
+        await editNote(req, res, next);
+      } catch (error) {
+        throw error;
+      }
+
       expect(res.statusCode).to.equal(400);
       expect(res.body.message).to.equal("Invalid note ID");
     });
@@ -93,7 +120,13 @@ describe("Notes Controller Tests", () => {
         },
       );
       const res = createRes();
-      await deleteNote(req, res, next);
+
+      try {
+        await deleteNote(req, res, next);
+      } catch (error) {
+        throw error;
+      }
+
       expect(res.statusCode).to.equal(400);
       expect(res.body.message).to.equal("Invalid note ID");
     });
@@ -108,7 +141,13 @@ describe("Notes Controller Tests", () => {
         },
       );
       const res = createRes();
-      await getSpecificNote(req, res, next);
+
+      try {
+        await getSpecificNote(req, res, next);
+      } catch (error) {
+        throw error;
+      }
+
       expect(res.statusCode).to.equal(400);
       expect(res.body.message).to.equal("Invalid note ID");
     });
@@ -117,21 +156,32 @@ describe("Notes Controller Tests", () => {
   describe("Get All Notes", () => {
     it("should return notes successfully", async () => {
       const originalFind = Note.find;
-      Note.find = async () => [
-        {
-          _id: "123",
-          title: "Test Note",
-          content: "Test Content",
-          user: "123456789012345678901234",
-        },
-      ];
-      const req = createReq();
-      const res = createRes();
-      await getAllNotes(req, res, next);
-      expect(res.statusCode).to.equal(200);
-      expect(res.body.message).to.equal("Notes fetched successfully");
-      expect(res.body.notes).to.be.an("array");
-      Note.find = originalFind;
+
+      try {
+        Note.find = async () => [
+          {
+            _id: "123",
+            title: "Test Note",
+            content: "Test Content",
+            user: "123456789012345678901234",
+          },
+        ];
+
+        const req = createReq();
+        const res = createRes();
+
+        try {
+          await getAllNotes(req, res, next);
+        } catch (error) {
+          throw error;
+        }
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.message).to.equal("Notes fetched successfully");
+        expect(res.body.notes).to.be.an("array");
+      } finally {
+        Note.find = originalFind;
+      }
     });
   });
 });
