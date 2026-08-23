@@ -4,7 +4,13 @@
 
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, jest } from "@jest/globals";
+import {
+  describe,
+  it,
+  expect,
+  jest,
+  beforeEach,
+} from "@jest/globals";
 import SignUp from "../pages/AuthPages/SignUp";
 import axios from "axios";
 
@@ -24,6 +30,9 @@ jest.mock("react-toastify", () => ({
 }));
 
 describe("SignUp Page Tests", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("should show error when fields are empty", async () => {
     render(<SignUp />);
@@ -34,13 +43,16 @@ describe("SignUp Page Tests", () => {
 
     fireEvent.click(signupButton);
 
-    const { toast } = await import("react-toastify");
+    try {
+      const { toast } = await import("react-toastify");
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Please fill all the fields"
-    );
+      expect(toast.error).toHaveBeenCalledWith(
+        "Please fill all the fields",
+      );
+    } catch (error) {
+      throw new Error(`Empty signup validation test failed: ${error.message}`);
+    }
   });
-
 
   it("should show error when password is less than 6 characters", async () => {
     render(<SignUp />);
@@ -52,7 +64,7 @@ describe("SignUp Page Tests", () => {
           value: "Test User",
           name: "name",
         },
-      }
+      },
     );
 
     fireEvent.change(
@@ -62,7 +74,7 @@ describe("SignUp Page Tests", () => {
           value: "test@gmail.com",
           name: "email",
         },
-      }
+      },
     );
 
     fireEvent.change(
@@ -72,22 +84,27 @@ describe("SignUp Page Tests", () => {
           value: "123",
           name: "password",
         },
-      }
+      },
     );
 
     fireEvent.click(
       screen.getByRole("button", {
         name: "Sign Up",
-      })
+      }),
     );
 
-    const { toast } = await import("react-toastify");
+    try {
+      const { toast } = await import("react-toastify");
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Password must be at least 6 characters"
-    );
+      expect(toast.error).toHaveBeenCalledWith(
+        "Password must be at least 6 characters",
+      );
+    } catch (error) {
+      throw new Error(
+        `Password validation test failed: ${error.message}`,
+      );
+    }
   });
-
 
   it("should signup successfully", async () => {
     axios.post.mockResolvedValue({
@@ -105,7 +122,7 @@ describe("SignUp Page Tests", () => {
           value: "Test User",
           name: "name",
         },
-      }
+      },
     );
 
     fireEvent.change(
@@ -115,7 +132,7 @@ describe("SignUp Page Tests", () => {
           value: "test@gmail.com",
           name: "email",
         },
-      }
+      },
     );
 
     fireEvent.change(
@@ -125,21 +142,32 @@ describe("SignUp Page Tests", () => {
           value: "123456",
           name: "password",
         },
-      }
+      },
     );
 
     fireEvent.click(
       screen.getByRole("button", {
         name: "Sign Up",
-      })
+      }),
     );
 
-    await waitFor(() => {
-      expect(axios.post).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith("/login");
-    });
-  });
+    try {
+      await waitFor(() => {
+        expect(axios.post).toHaveBeenCalledWith(
+          "http://localhost:5000/api/auth/signup",
+          {
+            name: "Test User",
+            email: "test@gmail.com",
+            password: "123456",
+          },
+        );
 
+        expect(mockNavigate).toHaveBeenCalledWith("/login");
+      });
+    } catch (error) {
+      throw new Error(`Signup success test failed: ${error.message}`);
+    }
+  });
 
   it("should show error when signup fails", async () => {
     axios.post.mockRejectedValue({
@@ -159,7 +187,7 @@ describe("SignUp Page Tests", () => {
           value: "Test User",
           name: "name",
         },
-      }
+      },
     );
 
     fireEvent.change(
@@ -169,7 +197,7 @@ describe("SignUp Page Tests", () => {
           value: "existing@gmail.com",
           name: "email",
         },
-      }
+      },
     );
 
     fireEvent.change(
@@ -179,22 +207,25 @@ describe("SignUp Page Tests", () => {
           value: "123456",
           name: "password",
         },
-      }
+      },
     );
 
     fireEvent.click(
       screen.getByRole("button", {
         name: "Sign Up",
-      })
+      }),
     );
 
-    const { toast } = await import("react-toastify");
+    try {
+      const { toast } = await import("react-toastify");
 
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        "Email already exists"
-      );
-    });
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(
+          "Email already exists",
+        );
+      });
+    } catch (error) {
+      throw new Error(`Signup failure test failed: ${error.message}`);
+    }
   });
-
 });

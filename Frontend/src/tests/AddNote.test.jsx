@@ -4,7 +4,7 @@
 
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, jest } from "@jest/globals";
+import { describe, it, expect, jest, beforeEach } from "@jest/globals";
 import AddNote from "../pages/NotesPages/AddNote";
 import axios from "axios";
 
@@ -26,6 +26,9 @@ jest.mock("react-toastify", () => ({
 jest.mock("../Components/Sidebar", () => () => <div>Sidebar</div>);
 
 describe("AddNote Page Tests", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("should show error when title or content is empty", async () => {
     render(<AddNote />);
@@ -33,16 +36,19 @@ describe("AddNote Page Tests", () => {
     fireEvent.click(
       screen.getByRole("button", {
         name: "Create Note",
-      })
+      }),
     );
 
-    const { toast } = await import("react-toastify");
+    try {
+      const { toast } = await import("react-toastify");
 
-    expect(toast.error).toHaveBeenCalledWith(
-      "Title and content are required"
-    );
+      expect(toast.error).toHaveBeenCalledWith(
+        "Title and content are required",
+      );
+    } catch (error) {
+      throw new Error(`Empty note validation test failed: ${error.message}`);
+    }
   });
-
 
   it("should create note successfully", async () => {
     axios.post.mockResolvedValue({
@@ -60,7 +66,7 @@ describe("AddNote Page Tests", () => {
           value: "My First Note",
           name: "title",
         },
-      }
+      },
     );
 
     fireEvent.change(
@@ -70,21 +76,24 @@ describe("AddNote Page Tests", () => {
           value: "This is my first note",
           name: "content",
         },
-      }
+      },
     );
 
     fireEvent.click(
       screen.getByRole("button", {
         name: "Create Note",
-      })
+      }),
     );
 
-    await waitFor(() => {
-      expect(axios.post).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
-    });
+    try {
+      await waitFor(() => {
+        expect(axios.post).toHaveBeenCalled();
+        expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
+      });
+    } catch (error) {
+      throw new Error(`Create note success test failed: ${error.message}`);
+    }
   });
-
 
   it("should show error when creating note fails", async () => {
     axios.post.mockRejectedValue({
@@ -104,7 +113,7 @@ describe("AddNote Page Tests", () => {
           value: "My Note",
           name: "title",
         },
-      }
+      },
     );
 
     fireEvent.change(
@@ -114,24 +123,27 @@ describe("AddNote Page Tests", () => {
           value: "Some content",
           name: "content",
         },
-      }
+      },
     );
 
     fireEvent.click(
       screen.getByRole("button", {
         name: "Create Note",
-      })
+      }),
     );
 
-    const { toast } = await import("react-toastify");
+    try {
+      const { toast } = await import("react-toastify");
 
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        "Failed to create note"
-      );
-    });
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(
+          "Failed to create note",
+        );
+      });
+    } catch (error) {
+      throw new Error(`Create note error test failed: ${error.message}`);
+    }
   });
-
 
   it("should navigate to dashboard when cancel is clicked", () => {
     render(<AddNote />);
@@ -139,10 +151,9 @@ describe("AddNote Page Tests", () => {
     fireEvent.click(
       screen.getByRole("button", {
         name: "Cancel",
-      })
+      }),
     );
 
     expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
   });
-
 });
