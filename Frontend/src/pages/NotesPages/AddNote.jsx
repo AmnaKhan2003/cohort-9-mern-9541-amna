@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Sidebar from "../../Components/Sidebar";
 
-export default function AddNote() {
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
+export default function AddNote() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -13,26 +15,34 @@ export default function AddNote() {
     content: "",
   });
 
-  const handleChange = (e) => {
-
+  const handleTitleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      title: e.target.value,
     });
+  };
 
+  const handleContentChange = (value) => {
+    setFormData({
+      ...formData,
+      content: value,
+    });
   };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
-    if (!formData.title || !formData.content) {
+    // Check empty fields
+    if (
+      !formData.title.trim() ||
+      !formData.content.trim() ||
+      formData.content === "<p><br></p>"
+    ) {
       toast.error("Title and content are required");
       return;
     }
 
     try {
-
       await axios.post(
         "http://localhost:5000/api/notes/create",
         formData,
@@ -44,19 +54,15 @@ export default function AddNote() {
       toast.success("Note created successfully");
 
       navigate("/dashboard");
-
     } catch (error) {
-
-        if (error.response?.status === 401) {
-            toast.error("Session expired. Please login again");
-                navigate("/login");
-        } else {
-
-      toast.error(
-        error.response?.data?.message || "Failed to create note"
-      );
-    }
-
+      if (error.response?.status === 401) {
+        toast.error("Session expired. Please login again");
+        navigate("/login");
+      } else {
+        toast.error(
+          error.response?.data?.message || "Failed to create note"
+        );
+      }
     }
   };
 
@@ -77,13 +83,17 @@ export default function AddNote() {
             Capture your thoughts and ideas.
           </p>
 
-
           <form
             onSubmit={handleSubmit}
             className="bg-white/5 border border-white/10 rounded-2xl p-8"
           >
 
-            <label className="block text-gray-300 mb-2"  htmlFor="note-title">
+            {/* Title */}
+
+            <label
+              className="block text-gray-300 mb-2"
+              htmlFor="note-title"
+            >
               Title
             </label>
 
@@ -92,28 +102,42 @@ export default function AddNote() {
               type="text"
               name="title"
               value={formData.title}
-              onChange={handleChange}
+              onChange={handleTitleChange}
               placeholder="Enter note title"
               className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-blue-400 mb-6"
             />
 
+            {/* Content */}
 
-            <label className="block text-gray-300 mb-2"  htmlFor="note-content">
+            <label className="block text-gray-300 mb-2">
               Content
             </label>
 
-            <textarea
-              id="note-content"
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder="Write your note..."
-              rows="10"
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-blue-400 resize-none"
-            />
+            <div className="rounded-xl overflow-hidden bg-white text-black">
 
+              <ReactQuill
+                theme="snow"
+                value={formData.content}
+                onChange={handleContentChange}
+                placeholder="Write your note..."
+                modules={{
+                  toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ["bold", "italic", "underline", "strike"],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    [{ align: [] }],
+                    ["blockquote", "code-block"],
+                    ["link"],
+                    ["clean"],
+                  ],
+                }}
+              />
 
-            <div className="flex gap-4 mt-6">
+            </div>
+
+            {/* Buttons */}
+
+            <div className="flex gap-4 mt-12">
 
               <button
                 type="button"
