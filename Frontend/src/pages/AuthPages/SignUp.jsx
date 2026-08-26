@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState,useEffect } from 'react'
+import { useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -124,7 +123,6 @@ export default function SignUp() {
 
                 <p className="text-center text-gray-300 mt-6">
                     Already have an account?
-
                     <button
                         onClick={() => navigate("/login")}
                         className="text-blue-400 ml-2"

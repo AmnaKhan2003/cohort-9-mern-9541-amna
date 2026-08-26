@@ -1,6 +1,5 @@
 import Note from "../Models/notes.js";
 import mongoose from "mongoose";
-import logger from "../Middleware/logger.js";
 // Create Note
 export const createNote = async (req, res, next) => {
   try {

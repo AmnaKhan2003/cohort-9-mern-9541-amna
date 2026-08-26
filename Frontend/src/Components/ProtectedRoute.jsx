@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children }) {
     const verifyToken = async () => {
         try {
 
-            const response = await axios.get(
+            await axios.get(
                 "http://localhost:5000/api/auth/verify",
                 {
                     withCredentials: true

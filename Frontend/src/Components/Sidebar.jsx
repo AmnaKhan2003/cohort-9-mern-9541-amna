@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -67,6 +67,7 @@ export default function Sidebar() {
     <>
       {/* Mobile Menu Button */}
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className="fixed left-4 top-4 z-40 rounded-lg bg-blue-500 p-2 text-white shadow-lg md:hidden"
       >
@@ -95,6 +96,7 @@ export default function Sidebar() {
 
         {/* Mobile Close Button */}
         <button
+          type="button"
           onClick={() => setIsOpen(false)}
           className="absolute right-4 top-5 text-gray-400 hover:text-white md:hidden"
         >
