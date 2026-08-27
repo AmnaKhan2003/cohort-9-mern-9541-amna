@@ -1,5 +1,3 @@
-import React from "react";
-import { Link } from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 
 export default function HomePage() {
@@ -40,7 +38,6 @@ export default function HomePage() {
         <div className="max-w-4xl">
 
           <h1 className="text-5xl md:text-7xl font-extrabold leading-tight">
-
             Organize Your Ideas.
             <span className="text-blue-400">
               {" "}Create Amazing Notes.
@@ -53,7 +50,6 @@ export default function HomePage() {
 
             A powerful note management platform designed to help you capture
             ideas, manage tasks, and stay productive anywhere, anytime.
-
           </p>
 
 
