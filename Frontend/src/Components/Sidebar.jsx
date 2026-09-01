@@ -39,9 +39,10 @@ export default function Sidebar() {
       toast.success("Logged out successfully");
       navigate("/login");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Logout failed"
-      );
+      if (error.response?.status === 401) {
+        toast.error("Session expired. Please login again");
+        navigate("/login");
+      }
     }
   };
 

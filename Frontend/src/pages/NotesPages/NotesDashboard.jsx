@@ -267,7 +267,9 @@ export default function NotesDashboard() {
                 </h3>
 
                 <p className="mt-3 line-clamp-4 min-h-[96px] text-sm leading-6 text-gray-400">
-                  {note.content}
+                   <div
+                    dangerouslySetInnerHTML={{ __html: note.content }}
+                  />
                 </p>
 
                 <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">

@@ -33,14 +33,17 @@ export default function AddNote() {
     e.preventDefault();
 
     // Check empty fields
-    if (
-      !formData.title.trim() ||
-      !formData.content.trim() ||
-      formData.content === "<p><br></p>"
-    ) {
-      toast.error("Title and content are required");
-      return;
-    }
+  // Remove HTML tags and whitespace from Quill content
+  const plainContent = formData.content
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, "")
+    .trim();
+
+  // Check empty fields
+  if (!formData.title.trim() || !plainContent) {
+    toast.error("Title and content are required");
+    return;
+  }
 
     try {
       await axios.post(

@@ -43,14 +43,13 @@ const getProfile = async () => {
   }, []);
 
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#0b1120] flex items-center justify-center text-white">
-        <p className="text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
+if (!user) {
+  return (
+    <div className="min-h-screen bg-[#0b1120] flex items-center justify-center">
+      <div className="w-10 h-10 border-4 border-gray-600 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+  );
+}
 
   return (
 

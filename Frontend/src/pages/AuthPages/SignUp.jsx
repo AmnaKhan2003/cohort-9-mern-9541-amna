@@ -28,6 +28,13 @@ export default function SignUp() {
             toast.error('Please fill all the fields')
             return;
         }
+         const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+         if (!emailRegex.test(formData.email)) {
+            toast.error('Please enter a valid email address');
+            return;
+        }
+
         if(formData.password.length < 6){
             toast.error('Password must be at least 6 characters')
             return;
