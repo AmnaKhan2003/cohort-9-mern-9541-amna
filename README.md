@@ -29,8 +29,8 @@ The repository is organized into two independent applications:
 
 | Folder     | Description                                                    |
 | ---------- | -------------------------------------------------------------- |
-| `frontend` | React application built with Vite and styled with Tailwind CSS |
-| `backend`  | REST API built with Express and MongoDB                        |
+| `Frontend` | React application built with Vite and styled with Tailwind CSS |
+| `Backend`  | REST API built with Express and MongoDB                        |
 
 ---
 
@@ -95,12 +95,12 @@ Before setting up the project, ensure the following are installed:
 ```
 cohort-9-mern-9541-amna/
 │
-├── frontend/
+├── Frontend/
 │   ├── src/
 │   ├── package.json
 │   └── ...
 │
-├── backend/
+├── Backend/
 │   ├── index.js
 │   ├── .env
 │   ├── package.json
@@ -116,21 +116,21 @@ cohort-9-mern-9541-amna/
 **1. Clone the repository**
 
 ```bash
-git clone <https://github.com/AmnaKhan2003/cohort-9-mern-9541-amna>
+git clone https://github.com/AmnaKhan2003/cohort-9-mern-9541-amna
 cd cohort-9-mern-9541-amna
 ```
 
 **2. Install frontend dependencies**
 
 ```bash
-cd frontend
+cd Frontend
 npm install
 ```
 
 **3. Install backend dependencies**
 
 ```bash
-cd ../backend
+cd ../Backend
 npm install
 ```
 
@@ -140,7 +140,7 @@ All required dependencies are declared in the respective `package.json` files an
 
 ## Environment Variables
 
-Create a `.env` file inside the `backend` directory with the following keys:
+Create a `.env` file inside the `Backend` directory with the following keys:
 
 ```env
 PORT=5000
@@ -169,14 +169,14 @@ The frontend and backend run as separate processes and should each be started in
 **Backend**
 
 ```bash
-cd backend
+cd Backend
 npm run dev
 ```
 
 **Frontend**
 
 ```bash
-cd frontend
+cd Frontend
 npm run dev
 ```
 
@@ -192,14 +192,14 @@ By default:
 **Frontend tests (Jest)**
 
 ```bash
-cd frontend
+cd Frontend
 npm run test
 ```
 
 **Backend tests (Mocha & Chai)**
 
 ```bash
-cd backend
+cd Backend
 npm run test
 ```
 
